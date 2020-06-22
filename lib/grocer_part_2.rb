@@ -84,9 +84,6 @@ def checkout(cart, coupons)
   check_coupons = apply_coupons(new_cart)
   binding.pry
   
-  
-  
-  
   return total
   
 end
