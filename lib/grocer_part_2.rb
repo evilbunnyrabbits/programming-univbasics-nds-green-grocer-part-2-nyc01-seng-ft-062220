@@ -2,51 +2,30 @@ require_relative './part_1_solution.rb'
 require 'pry'
 
 def apply_coupons(cart, coupons)
-  output = []
+  counter = 0
+  while counter < coupons.length
+    cart_item = find_item_by_name_in_collection(coupons[counter][:item], cart)
+    couponed_item_name = "#{coupons[counter][:item]} W/COUPON"
+    cart_item_with_coupon = find_item_by_name_in_collection(couponed_item_name, cart)
 
-  cart.each do |grocery_item|
-    item_name = grocery_item[:item]
-    item_price = grocery_item[:price]
-    item_clearance = grocery_item[:clearance]
-    item_count = grocery_item[:count]
-
-    coupons.each do |coupon_item|
-      coupon_name = coupon_item[:item]
-      coupon_number = coupon_item[:num]
-      coupon_cost = coupon_item[:cost]
-
-      if item_name == coupon_name
-
-        discount_name = "#{item_name} W/COUPON"
-        not_discount_items = item_count - coupon_number
-        discounted_items = item_count - not_discount_items
-
-        not_discounted_price = item_price * not_discount_items
-        discounted_price = coupon_cost / discounted_items
-
-        discount_object = {}
-        discount_object[:item] = discount_name
-        discount_object[:price] = discounted_price.round(2)
-        discount_object[:clearance] = item_clearance
-        discount_object[:count] = discounted_items
-
-        output.push(discount_object)
-
-        non_discount_object = {}
-        non_discount_object[:item] = item_name
-        non_discount_object[:price] = not_discounted_price
-        non_discount_object[:clearance] = item_clearance
-        non_discount_object[:count] = not_discount_items
-
-        output.push(non_discount_object)
-
-      else
-        output.push(grocery_item)
+    if cart_item && cart_item[:count] >= coupons[counter][:num]
+      if cart_item_with_coupon
+        cart_item_with_coupon[:count] += coupons[counter][:num]
+        cart_item[:count] -= coupons[counter][:num]
       end
+    else
+      cart_item_with_coupon = {
+          :item => couponed_item_name,
+          :price => coupons[counter][:cost] / coupons[counter][:num],
+          :count => coupons[counter][:num],
+          :clearance => cart_item[:clearance]
+      }
+      cart << cart_item_with_coupon
+      cart_item[:count] -= coupons[counter][:num]
     end
+    counter += 1
   end
-
-  return output
+  cart
 end
 
 
