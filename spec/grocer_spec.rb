@@ -121,7 +121,7 @@ describe "Grocer" do
         coupon_applied_cart = apply_coupons(consolidated_cart, [avocado_coupon])
         original_item = find_item_by_name_in_collection(item_name, coupon_applied_cart)
         expect(original_item[:price]).to eq(3.00)
-        expect(original_item[:count]).to eq(0)
+        expect(original_item[:count]).to eq(1)
       end
 
       it "remembers if the item was on clearance" do
